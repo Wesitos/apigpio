@@ -1067,7 +1067,7 @@ class Pi(object):
         except asyncio.futures.CancelledError:
             pass
         finally:
-            pi_cb.cancel()
+            yield from pi_cb.cancel()
 
     def __init__(self, loop=None):
         if loop is None:
