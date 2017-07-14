@@ -1052,6 +1052,23 @@ class Pi(object):
         res = yield from self._pigpio_aio_command(_PI_CMD_SERVO, user_gpio, int(pulsewidth))
         return _u2i(res)
 
+    @asyncio.coroutine
+    def wait_edge(self, gpio, edge):
+        "Wait until an edge"
+        fut = asyncio.Future()
+
+        def callback():
+            if not fut.done():
+                fut.set_result(True)
+
+        pi_cb = yield from self.add_callback(gpio, edge, callback)
+        try:
+            yield from fut
+        except asyncio.futures.CancelledError:
+            pass
+        finally:
+            pi_cb.cancel()
+
     def __init__(self, loop=None):
         if loop is None:
             loop = asyncio.get_event_loop()
