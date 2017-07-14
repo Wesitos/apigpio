@@ -1026,7 +1026,7 @@ class Pi(object):
         "Wait until an edge"
         fut = asyncio.Future()
 
-        def callback():
+        def callback(gpio, level, tick):
             if not fut.done():
                 fut.set_result(True)
 
